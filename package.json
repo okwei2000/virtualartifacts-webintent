@@ -1,0 +1,47 @@
+{
+  "name": "cordova-plugin-webintent2",
+  "version": "1.0.1",
+  "description": "By Boris Smus",
+  "cordova": {
+    "id": "cordova-plugin-webintent2",
+    "platforms": [
+      "ios",
+      "android",
+      "windows8",
+      "windows"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/okwei2000/webintent.git"
+  },
+  "keywords": [
+    "Custom URL Scheme",
+    "URLscheme",
+    "URL scheme",
+    "Custom URL",
+    "Launch My App",
+    "Launch App",
+    "ecosystem:cordova",
+    "cordova-ios",
+    "cordova-android",
+    "cordova-windows",
+    "cordova-windows8"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.0.0"
+    }
+  ],
+  "author": "Kevin Wei",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/okwei2000/webintent/issues"
+  },
+  "homepage": "https://github.com/okwei2000/webintent#readme",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
