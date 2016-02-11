@@ -162,6 +162,7 @@ public class WebIntent extends CordovaPlugin {
                 String extraName = args.getString(0);
                 i.removeExtra(extraName);
                 callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+                return true;
             }
 
             //return new PluginResult(PluginResult.Status.INVALID_ACTION);
