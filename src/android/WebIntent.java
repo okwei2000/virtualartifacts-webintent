@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.cordova.CordovaActivity;
 import org.json.JSONArray;
@@ -206,19 +207,25 @@ public class WebIntent extends CordovaPlugin {
         */
         //
         //CordovaResourceApi resourceApi = webView.getResourceApi();
-        File fileToShare =  new File(new URI(uri.toString()));
-        Uri theUri = FileProvider.getUriForFile(this.cordova.getActivity(),
-                //getString(R.string.file_provider_authority),
-                "com.qdev.ezbooks.provider",
-                //BuildConfig.APPLICATION_ID + ".provider",
-                fileToShare);
-        
-        Intent shareIntent = new Intent(action);
-        shareIntent.putExtra(Intent.EXTRA_STREAM, theUri);
-        shareIntent.setType(type);
-        shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        
-        ((CordovaActivity)this.cordova.getActivity()).startActivity(shareIntent);
+        try{
+            File fileToShare =  new File(new URI(uri.toString()));
+            Uri theUri = FileProvider.getUriForFile(this.cordova.getActivity(),
+                    //getString(R.string.file_provider_authority),
+                    "com.qdev.ezbooks.provider",
+                    //BuildConfig.APPLICATION_ID + ".provider",
+                    fileToShare);
+            
+            Intent shareIntent = new Intent(action);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, theUri);
+            shareIntent.setType(type);
+            shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            
+            ((CordovaActivity)this.cordova.getActivity()).startActivity(shareIntent);
+        }catch(URISyntaxException e){
+            final String errorMessage = e.getMessage();
+            Log.e(LOG_TAG, errorMessage);
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
+        }
         return;
     }
 
