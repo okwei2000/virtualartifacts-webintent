@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.text.Html;
 import android.util.Log;
+import android.support.v4.content.FileProvider;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -170,7 +171,7 @@ public class WebIntent extends CordovaPlugin {
 
     void startActivity(String action, Uri uri, String type, Map<String, String> extras) {
         Intent i = uri != null ? new Intent(action, uri) : new Intent(action);
-        i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        
 
         if (type != null && uri != null) {
             i.setDataAndType(uri, type); //Fix the crash problem with android 2.3.6
@@ -190,7 +191,24 @@ public class WebIntent extends CordovaPlugin {
                 // Allows sharing of images as attachments.
                 // `value` in this case should be the URI of a file.
                 final CordovaResourceApi resourceApi = webView.getResourceApi();
-                i.putExtra(key, resourceApi.remapUri(Uri.parse(value)));
+                //i.putExtra(key, resourceApi.remapUri(Uri.parse(value)));
+                
+                //
+                File fileToShare =  resourceApi.mapUriToFile(uri);
+                Uri theUri = FileProvider.getUriForFile(this.cordova.getActivity(),
+                        //getString(R.string.file_provider_authority),
+                        "com.qdev.ezbooks.provider",
+                        //BuildConfig.APPLICATION_ID + ".provider",
+                        fileToShare);
+                
+                Intent shareIntent = new Intent(action);
+                shareIntent.putExtra(key, uriToImage);
+                shareIntent.setType(type);
+                shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                
+                ((CordovaActivity)this.cordova.getActivity()).startActivity(shareIntent);
+                return;
+                
             } else if (key.equals(Intent.EXTRA_EMAIL)) {
                 // Allows adding the email address of the receiver.
                 i.putExtra(Intent.EXTRA_EMAIL, new String[] { value });
