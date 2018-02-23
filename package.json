@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-webintent2",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "By Boris Smus",
   "cordova": {
     "id": "cordova-plugin-webintent2",
