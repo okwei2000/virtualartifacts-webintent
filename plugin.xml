@@ -21,7 +21,8 @@
 
         <source-file src="src/android/WebIntent.java" target-dir="src/com/borismus/webintent" />
 
-        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+        <!--
+        <config-file target="AndroidManifest.xml" phttps://phonegap.com/blog/2016/02/16/git-plugins/arent="/manifest/application">
             <receiver
                 android:name="com.borismus.webintent.WebIntent$ReferralReceiver"
                 android:enabled="true"
@@ -32,5 +33,6 @@
                 </intent-filter>
             </receiver>
         </config-file>
+        -->
     </platform>
 </plugin>
