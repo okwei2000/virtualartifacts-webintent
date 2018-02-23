@@ -205,7 +205,7 @@ public class WebIntent extends CordovaPlugin {
         */
         //
         //CordovaResourceApi resourceApi = webView.getResourceApi();
-        File fileToShare =  new File(Uri.toString());
+        File fileToShare =  new File(uri.toString());
         Uri theUri = FileProvider.getUriForFile(this.cordova.getActivity(),
                 //getString(R.string.file_provider_authority),
                 "com.qdev.ezbooks.provider",
