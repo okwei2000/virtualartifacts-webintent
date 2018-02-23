@@ -170,6 +170,7 @@ public class WebIntent extends CordovaPlugin {
 
     void startActivity(String action, Uri uri, String type, Map<String, String> extras) {
         Intent i = uri != null ? new Intent(action, uri) : new Intent(action);
+        i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
         if (type != null && uri != null) {
             i.setDataAndType(uri, type); //Fix the crash problem with android 2.3.6
