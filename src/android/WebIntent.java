@@ -2,6 +2,7 @@ package com.borismus.webintent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.io.File;
 
 import org.apache.cordova.CordovaActivity;
 import org.json.JSONArray;
@@ -202,7 +203,7 @@ public class WebIntent extends CordovaPlugin {
                         fileToShare);
                 
                 Intent shareIntent = new Intent(action);
-                shareIntent.putExtra(key, uriToImage);
+                shareIntent.putExtra(key, theUri);
                 shareIntent.setType(type);
                 shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 
