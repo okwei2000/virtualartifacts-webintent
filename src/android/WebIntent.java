@@ -156,11 +156,15 @@ public class WebIntent extends CordovaPlugin {
 
     @Override
     public void onNewIntent(Intent intent) {
-
-        if (this.onNewIntentCallbackContext != null) {
-            PluginResult result = new PluginResult(PluginResult.Status.OK, intent.getDataString());
-            result.setKeepCallback(true);
-            this.onNewIntentCallbackContext.sendPluginResult(result);
+        super.onNewIntent(intent);
+        if (this.onNewIntentCallbackContext != null) {            
+            //K.W: We only care about the Intent.EXTRA_STREAM
+            Uri streamUri = (Uri)intent.getParcelableExtra(Intent.EXTRA_STREAM);
+            if(streamUri!=null){
+                PluginResult result = new PluginResult(PluginResult.Status.OK, streamUri.toString());
+                result.setKeepCallback(true);
+                this.onNewIntentCallbackContext.sendPluginResult(result);
+            }
         }
     }
 
