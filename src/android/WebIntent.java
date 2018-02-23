@@ -224,7 +224,7 @@ public class WebIntent extends CordovaPlugin {
         }catch(URISyntaxException e){
             final String errorMessage = e.getMessage();
             Log.e(LOG_TAG, errorMessage);
-            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
+            this.onNewIntentCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
         }
         return;
     }
