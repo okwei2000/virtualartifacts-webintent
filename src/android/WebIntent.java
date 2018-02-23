@@ -212,7 +212,7 @@ public class WebIntent extends CordovaPlugin {
                 fileToShare);
         
         Intent shareIntent = new Intent(action);
-        shareIntent.putExtra(key, theUri);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, theUri);
         shareIntent.setType(type);
         shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         
