@@ -207,7 +207,7 @@ public class WebIntent extends CordovaPlugin {
         */
         //
         //CordovaResourceApi resourceApi = webView.getResourceApi();
-        try{
+        //try{
             //File fileToShare =  new File(new URI(uri.getPath()));
             File fileToShare =  new File("file:///data/user/0/com.qdev.ezbooks/files/invoice-553.pdf");
             Uri theUri = FileProvider.getUriForFile(this.cordova.getActivity(),
@@ -222,11 +222,11 @@ public class WebIntent extends CordovaPlugin {
             shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             
             ((CordovaActivity)this.cordova.getActivity()).startActivity(shareIntent);
-        }catch(URISyntaxException e){
-            final String errorMessage = e.getMessage();
-            Log.e(LOG_TAG, errorMessage);
-            this.onNewIntentCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
-        }
+        //}catch(URISyntaxException e){
+        //    final String errorMessage = e.getMessage();
+        //    Log.e(LOG_TAG, errorMessage);
+        //    this.onNewIntentCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
+        //}
         return;
     }
 
