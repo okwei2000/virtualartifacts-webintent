@@ -3,6 +3,7 @@ package com.borismus.webintent;
 import java.util.HashMap;
 import java.util.Map;
 import java.io.File;
+import java.net.URI;
 
 import org.apache.cordova.CordovaActivity;
 import org.json.JSONArray;
@@ -205,7 +206,7 @@ public class WebIntent extends CordovaPlugin {
         */
         //
         //CordovaResourceApi resourceApi = webView.getResourceApi();
-        File fileToShare =  new File(uri.toString());
+        File fileToShare =  new File(new URI(uri.toString()));
         Uri theUri = FileProvider.getUriForFile(this.cordova.getActivity(),
                 //getString(R.string.file_provider_authority),
                 "com.qdev.ezbooks.provider",
