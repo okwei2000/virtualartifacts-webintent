@@ -214,7 +214,7 @@ public class WebIntent extends CordovaPlugin {
 //            
 //            new File(cordova.getActivity().getCacheDir(), "tmp");
             
-            File fileToShare =  new File(new URI(uri.getPath()));
+            File fileToShare =  new File(new URI(uri.toString()));
             Uri contentUri = FileProvider.getUriForFile(this.cordova.getActivity(),
                     //getString(R.string.file_provider_authority),
                     //cordova.getActivity().getPackageName() + "." + TAG + ".fileprovider",
