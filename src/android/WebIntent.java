@@ -228,27 +228,6 @@ public class WebIntent extends CordovaPlugin {
             }
         }
         ((CordovaActivity)this.cordova.getActivity()).startActivity(i);
-        
-//        try{
-//            File fileToShare =  new File(new URI(uri.toString()));
-//            Uri contentUri = FileProvider.getUriForFile(this.cordova.getActivity(),
-//                    cordova.getActivity().getPackageName() + ".provider",
-//                    //"com.qdev.ezbooks.provider",
-//                    fileToShare);
-//            
-//            Intent shareIntent = new Intent(action);
-//            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-//            shareIntent.setType(type);
-//            shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//            shareIntent.setDataAndType(contentUri, type);
-//            
-//            ((CordovaActivity)this.cordova.getActivity()).startActivity(shareIntent);
-//        }catch(URISyntaxException e){
-//            final String errorMessage = e.getMessage();
-//            Log.e(LOG_TAG, errorMessage);
-//            this.onNewIntentCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
-//        }
-//        return;
     }
 
     void sendBroadcast(String action, Map<String, String> extras) {
