@@ -20,11 +20,12 @@
 - Many people forked but for some reason did not submit PRs,
   leaving their forks divergent.
 
-## What's new in this folk
+## Why this folk
 - I use this plugin to allow my cordova app to accept files (any files) from another app.
 - I use this plugin to allow my cordova app to share files (any files) to another app.
 - Change the onNewIntent() to process the Intent.EXTRA_STREAM (accepting files from other apps)
 - Change the startActivity() to allow sharing any file using file://, using the FileProvider for Android N.
+- I use it in my Phonegap Build project (https://build.phonegap.com)
 
 ## Disclaimers
 - I'm not an Android developer, I have little clue on how Android works, especially Intent. I just made this plugin works for my own purpose. I just copy & pasted code from other plugins to make it work.

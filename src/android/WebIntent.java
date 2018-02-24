@@ -194,7 +194,7 @@ public class WebIntent extends CordovaPlugin {
             } else if (key.equals(Intent.EXTRA_STREAM)) {
                 //Kevin W: Android 7.0 Nougat no longer allow file to be shared by file://
                 //https://proandroiddev.com/sharing-files-though-intents-are-you-ready-for-nougat-70f7e9294a0b
-                if(newApi() && uri.toString().startsWith("file://")){
+                if(newApi() && uri.getScheme().equals("file")){
                     try{
                         File fileToShare =  new File(new URI(uri.toString()));
                         Uri contentUri = FileProvider.getUriForFile(this.cordova.getActivity(),
