@@ -217,18 +217,16 @@ public class WebIntent extends CordovaPlugin {
             File fileToShare =  new File(new URI(uri.toString()));
             Uri contentUri = FileProvider.getUriForFile(this.cordova.getActivity(),
                     //getString(R.string.file_provider_authority),
-                    //cordova.getActivity().getPackageName() + "." + TAG + ".fileprovider",
-                    "com.qdev.ezbooks.provider",
+                    cordova.getActivity().getPackageName() + ".provider",
+                    //"com.qdev.ezbooks.provider",
                     //BuildConfig.APPLICATION_ID + ".provider",
                     fileToShare);
-            
             
             Intent shareIntent = new Intent(action);
             shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
             shareIntent.setType(type);
             shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             shareIntent.setDataAndType(contentUri, type);
-            //shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             
             ((CordovaActivity)this.cordova.getActivity()).startActivity(shareIntent);
         }catch(URISyntaxException e){
