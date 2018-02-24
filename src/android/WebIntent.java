@@ -174,60 +174,58 @@ public class WebIntent extends CordovaPlugin {
     }
 
     void startActivity(String action, Uri uri, String type, Map<String, String> extras) {
-        Intent i = uri != null ? new Intent(action, uri) : new Intent(action);
-        
-
-        if (type != null && uri != null) {
-            i.setDataAndType(uri, type); //Fix the crash problem with android 2.3.6
-        } else {
-            if (type != null) {
-                i.setType(type);
+        //Kevin W: Android 7.0 Nougat no longer allow file to be shared by file://
+        //https://proandroiddev.com/sharing-files-though-intents-are-you-ready-for-nougat-70f7e9294a0b
+        if(newApi()){
+            try{
+                File fileToShare =  new File(new URI(uri.toString()));
+                Uri contentUri = FileProvider.getUriForFile(this.cordova.getActivity(),
+                        cordova.getActivity().getPackageName() + ".provider",
+                        fileToShare);
+                
+                Intent shareIntent = new Intent(action);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                shareIntent.setType(type);
+                shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                shareIntent.setDataAndType(contentUri, type);
+                
+                ((CordovaActivity)this.cordova.getActivity()).startActivity(shareIntent);
+                return;
+            }catch(URISyntaxException e){
+                final String errorMessage = e.getMessage();
+                Log.e(LOG_TAG, errorMessage);
+                this.onNewIntentCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
             }
-        }
-
-        for (Map.Entry<String, String> entry : extras.entrySet()) {
-            final String key = entry.getKey();
-            final String value = entry.getValue();
-            // If type is text/html, the extra text must be sent as HTML.
-            if (key.equals(Intent.EXTRA_TEXT) && "text/html".equals(type)) {
-                i.putExtra(key, Html.fromHtml(value));
-            } else if (key.equals(Intent.EXTRA_STREAM)) {
-                //Kevin W: Android 7.0 Nougat no longer allow file to be shared by file://
-                //https://proandroiddev.com/sharing-files-though-intents-are-you-ready-for-nougat-70f7e9294a0b
-                if(newApi()){
-                    try{
-                        File fileToShare =  new File(new URI(uri.toString()));
-                        Uri contentUri = FileProvider.getUriForFile(this.cordova.getActivity(),
-                                cordova.getActivity().getPackageName() + ".provider",
-                                fileToShare);
-                        
-                        Intent shareIntent = new Intent(action);
-                        shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-                        shareIntent.setType(type);
-                        shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        shareIntent.setDataAndType(contentUri, type);
-                        
-                        ((CordovaActivity)this.cordova.getActivity()).startActivity(shareIntent);
-                        return;
-                    }catch(URISyntaxException e){
-                        final String errorMessage = e.getMessage();
-                        Log.e(LOG_TAG, errorMessage);
-                        this.onNewIntentCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
-                    }
-                }else{
-                  // Allows sharing of images as attachments.
-                  // `value` in this case should be the URI of a file.
-                  final CordovaResourceApi resourceApi = webView.getResourceApi();
-                  i.putExtra(key, resourceApi.remapUri(Uri.parse(value)));
-                }
-            } else if (key.equals(Intent.EXTRA_EMAIL)) {
-                // Allows adding the email address of the receiver.
-                i.putExtra(Intent.EXTRA_EMAIL, new String[] { value });
+        }else{
+            Intent i = uri != null ? new Intent(action, uri) : new Intent(action);
+            if (type != null && uri != null) {
+                i.setDataAndType(uri, type); //Fix the crash problem with android 2.3.6
             } else {
-                i.putExtra(key, value);
+                if (type != null) {
+                    i.setType(type);
+                }
             }
+    
+            for (Map.Entry<String, String> entry : extras.entrySet()) {
+                final String key = entry.getKey();
+                final String value = entry.getValue();
+                // If type is text/html, the extra text must be sent as HTML.
+                if (key.equals(Intent.EXTRA_TEXT) && "text/html".equals(type)) {
+                    i.putExtra(key, Html.fromHtml(value));
+                } else if (key.equals(Intent.EXTRA_STREAM)) {
+                    // Allows sharing of images as attachments.
+                    // `value` in this case should be the URI of a file.
+                    final CordovaResourceApi resourceApi = webView.getResourceApi();
+                    i.putExtra(key, resourceApi.remapUri(Uri.parse(value)));
+                } else if (key.equals(Intent.EXTRA_EMAIL)) {
+                    // Allows adding the email address of the receiver.
+                    i.putExtra(Intent.EXTRA_EMAIL, new String[] { value });
+                } else {
+                    i.putExtra(key, value);
+                }
+            }
+            ((CordovaActivity)this.cordova.getActivity()).startActivity(i);
         }
-        ((CordovaActivity)this.cordova.getActivity()).startActivity(i);
     }
 
     void sendBroadcast(String action, Map<String, String> extras) {
@@ -254,7 +252,6 @@ public class WebIntent extends CordovaPlugin {
     }
     
     private boolean newApi(){
-        //return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
-        return true;
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
     }
 }
