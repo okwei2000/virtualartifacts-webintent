@@ -254,6 +254,7 @@ public class WebIntent extends CordovaPlugin {
     }
     
     private boolean newApi(){
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+        //return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+        return true;
     }
 }
