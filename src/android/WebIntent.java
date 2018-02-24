@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.text.Html;
 import android.util.Log;
 import android.support.v4.content.FileProvider;
+import android.os.Build;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -162,7 +163,7 @@ public class WebIntent extends CordovaPlugin {
     public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (this.onNewIntentCallbackContext != null) {            
-            //K.W: We only care about the Intent.EXTRA_STREAM
+            //Kevin W: We only care about the Intent.EXTRA_STREAM
             Uri streamUri = (Uri)intent.getParcelableExtra(Intent.EXTRA_STREAM);
             if(streamUri!=null){
                 PluginResult result = new PluginResult(PluginResult.Status.OK, streamUri.toString());
@@ -191,29 +192,33 @@ public class WebIntent extends CordovaPlugin {
             if (key.equals(Intent.EXTRA_TEXT) && "text/html".equals(type)) {
                 i.putExtra(key, Html.fromHtml(value));
             } else if (key.equals(Intent.EXTRA_STREAM)) {
-//                // Allows sharing of images as attachments.
-//                // `value` in this case should be the URI of a file.
-//                final CordovaResourceApi resourceApi = webView.getResourceApi();
-//                i.putExtra(key, resourceApi.remapUri(Uri.parse(value)));
-                try{
-                    File fileToShare =  new File(new URI(uri.toString()));
-                    Uri contentUri = FileProvider.getUriForFile(this.cordova.getActivity(),
-                            cordova.getActivity().getPackageName() + ".provider",
-                            //"com.qdev.ezbooks.provider",
-                            fileToShare);
-                    
-                    Intent shareIntent = new Intent(action);
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-                    shareIntent.setType(type);
-                    shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    shareIntent.setDataAndType(contentUri, type);
-                    
-                    ((CordovaActivity)this.cordova.getActivity()).startActivity(shareIntent);
-                    return;
-                }catch(URISyntaxException e){
-                    final String errorMessage = e.getMessage();
-                    Log.e(LOG_TAG, errorMessage);
-                    this.onNewIntentCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
+                //Kevin W: Android 7.0 Nougat no longer allow file to be shared by file://
+                //https://proandroiddev.com/sharing-files-though-intents-are-you-ready-for-nougat-70f7e9294a0b
+                if(newApi() && uri.toString().startsWith("file://")){
+                    try{
+                        File fileToShare =  new File(new URI(uri.toString()));
+                        Uri contentUri = FileProvider.getUriForFile(this.cordova.getActivity(),
+                                cordova.getActivity().getPackageName() + ".provider",
+                                fileToShare);
+                        
+                        Intent shareIntent = new Intent(action);
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                        shareIntent.setType(type);
+                        shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        shareIntent.setDataAndType(contentUri, type);
+                        
+                        ((CordovaActivity)this.cordova.getActivity()).startActivity(shareIntent);
+                        return;
+                    }catch(URISyntaxException e){
+                        final String errorMessage = e.getMessage();
+                        Log.e(LOG_TAG, errorMessage);
+                        this.onNewIntentCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
+                    }
+                }else{
+                  // Allows sharing of images as attachments.
+                  // `value` in this case should be the URI of a file.
+                  final CordovaResourceApi resourceApi = webView.getResourceApi();
+                  i.putExtra(key, resourceApi.remapUri(Uri.parse(value)));
                 }
             } else if (key.equals(Intent.EXTRA_EMAIL)) {
                 // Allows adding the email address of the receiver.
@@ -267,5 +272,9 @@ public class WebIntent extends CordovaPlugin {
             installReferrer = intent.getStringExtra("referrer");
             Log.i(LOG_TAG, String.format("Install referrer: %s", installReferrer));
         }
+    }
+    
+    private boolean newApi(){
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
     }
 }
