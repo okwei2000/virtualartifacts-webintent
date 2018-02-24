@@ -207,26 +207,35 @@ public class WebIntent extends CordovaPlugin {
         */
         //
         //CordovaResourceApi resourceApi = webView.getResourceApi();
-        //try{
-            //File fileToShare =  new File(new URI(uri.getPath()));
-            File fileToShare =  new File("file:///data/user/0/com.qdev.ezbooks/files/invoice-553.pdf");
-            Uri theUri = FileProvider.getUriForFile(this.cordova.getActivity(),
+        
+        try{
+//            CordovaResourceApi cra = webView.getResourceApi();
+//            Uri uri = Uri.parse(fileArg);
+//            
+//            new File(cordova.getActivity().getCacheDir(), "tmp");
+            
+            File fileToShare =  new File(new URI(uri.getPath()));
+            Uri contentUri = FileProvider.getUriForFile(this.cordova.getActivity(),
                     //getString(R.string.file_provider_authority),
+                    //cordova.getActivity().getPackageName() + "." + TAG + ".fileprovider",
                     "com.qdev.ezbooks.provider",
                     //BuildConfig.APPLICATION_ID + ".provider",
                     fileToShare);
             
+            
             Intent shareIntent = new Intent(action);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, theUri);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
             shareIntent.setType(type);
             shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            shareIntent.setDataAndType(contentUri, type);
+            //shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             
             ((CordovaActivity)this.cordova.getActivity()).startActivity(shareIntent);
-        //}catch(URISyntaxException e){
-        //    final String errorMessage = e.getMessage();
-        //    Log.e(LOG_TAG, errorMessage);
-        //    this.onNewIntentCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
-        //}
+        }catch(URISyntaxException e){
+            final String errorMessage = e.getMessage();
+            Log.e(LOG_TAG, errorMessage);
+            this.onNewIntentCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
+        }
         return;
     }
 
