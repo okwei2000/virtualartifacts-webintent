@@ -173,7 +173,6 @@ public class WebIntent extends CordovaPlugin {
     }
 
     void startActivity(String action, Uri uri, String type, Map<String, String> extras) {
-        /*
         Intent i = uri != null ? new Intent(action, uri) : new Intent(action);
         
 
@@ -192,10 +191,30 @@ public class WebIntent extends CordovaPlugin {
             if (key.equals(Intent.EXTRA_TEXT) && "text/html".equals(type)) {
                 i.putExtra(key, Html.fromHtml(value));
             } else if (key.equals(Intent.EXTRA_STREAM)) {
-                // Allows sharing of images as attachments.
-                // `value` in this case should be the URI of a file.
-                final CordovaResourceApi resourceApi = webView.getResourceApi();
-                i.putExtra(key, resourceApi.remapUri(Uri.parse(value)));
+//                // Allows sharing of images as attachments.
+//                // `value` in this case should be the URI of a file.
+//                final CordovaResourceApi resourceApi = webView.getResourceApi();
+//                i.putExtra(key, resourceApi.remapUri(Uri.parse(value)));
+                try{
+                    File fileToShare =  new File(new URI(uri.toString()));
+                    Uri contentUri = FileProvider.getUriForFile(this.cordova.getActivity(),
+                            cordova.getActivity().getPackageName() + ".provider",
+                            //"com.qdev.ezbooks.provider",
+                            fileToShare);
+                    
+                    Intent shareIntent = new Intent(action);
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                    shareIntent.setType(type);
+                    shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    shareIntent.setDataAndType(contentUri, type);
+                    
+                    ((CordovaActivity)this.cordova.getActivity()).startActivity(shareIntent);
+                    return;
+                }catch(URISyntaxException e){
+                    final String errorMessage = e.getMessage();
+                    Log.e(LOG_TAG, errorMessage);
+                    this.onNewIntentCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
+                }
             } else if (key.equals(Intent.EXTRA_EMAIL)) {
                 // Allows adding the email address of the receiver.
                 i.putExtra(Intent.EXTRA_EMAIL, new String[] { value });
@@ -204,31 +223,27 @@ public class WebIntent extends CordovaPlugin {
             }
         }
         ((CordovaActivity)this.cordova.getActivity()).startActivity(i);
-        */
-        //
-        //CordovaResourceApi resourceApi = webView.getResourceApi();
         
-        try{
-            File fileToShare =  new File(new URI(uri.toString()));
-            fileToShare =  new File(uri.toString());
-            Uri contentUri = FileProvider.getUriForFile(this.cordova.getActivity(),
-                    cordova.getActivity().getPackageName() + ".provider",
-                    //"com.qdev.ezbooks.provider",
-                    fileToShare);
-            
-            Intent shareIntent = new Intent(action);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-            shareIntent.setType(type);
-            shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            shareIntent.setDataAndType(contentUri, type);
-            
-            ((CordovaActivity)this.cordova.getActivity()).startActivity(shareIntent);
-        }catch(URISyntaxException e){
-            final String errorMessage = e.getMessage();
-            Log.e(LOG_TAG, errorMessage);
-            this.onNewIntentCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
-        }
-        return;
+//        try{
+//            File fileToShare =  new File(new URI(uri.toString()));
+//            Uri contentUri = FileProvider.getUriForFile(this.cordova.getActivity(),
+//                    cordova.getActivity().getPackageName() + ".provider",
+//                    //"com.qdev.ezbooks.provider",
+//                    fileToShare);
+//            
+//            Intent shareIntent = new Intent(action);
+//            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+//            shareIntent.setType(type);
+//            shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//            shareIntent.setDataAndType(contentUri, type);
+//            
+//            ((CordovaActivity)this.cordova.getActivity()).startActivity(shareIntent);
+//        }catch(URISyntaxException e){
+//            final String errorMessage = e.getMessage();
+//            Log.e(LOG_TAG, errorMessage);
+//            this.onNewIntentCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
+//        }
+//        return;
     }
 
     void sendBroadcast(String action, Map<String, String> extras) {
