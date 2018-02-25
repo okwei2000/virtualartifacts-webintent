@@ -35,7 +35,7 @@ And provider_paths.xml in the res/xml
 If you aleady include some other plugins, like the camera plugin, those changes should have already in your project.
 
 ## Disclaimers
-- I'm not an Android developer, I have little clue on how Android works, especially Intent. I just made this plugin works for my own purpose. I just copy & pasted code from other plugins to make it work. If you know how to clean up the code, please let me know.
+- I'm not an Android nor Cordova Plugin developer, I have little knowledge on how Android and the plugin works, especially Intent. I just made this plugin works for my own purpose. I just copy & pasted code from other plugins to make it work. If you know how to clean up the code, please let me know.
 
 ## History
 
@@ -53,6 +53,9 @@ If you aleady include some other plugins, like the camera plugin, those changes 
 - Forked by [Chris E. Kelley](https://github.com/chrisekelley)
   and published to
   [cordova-misc/cordova-webintent](https://github.com/cordova-misc/cordova-webintent)
+  
+- Forked by [Kevin] (https://github.com/okwei2000/webintent)
+  to use for file sharing between apps and support Android N. & above with FileProvider.
 
 - Many people forked but for some reason did not submit PRs,
   leaving their forks divergent.
