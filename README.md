@@ -12,7 +12,7 @@
 Read more: https://inthecheesefactory.com/blog/how-to-share-access-to-file-with-fileprovider-on-android-nougat/en
 
 You will need the following in AndroidManifest.xml
-'''
+`
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.yourcompany.provider"
@@ -20,16 +20,18 @@ You will need the following in AndroidManifest.xml
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_provider_paths" />
+                android:resource="@xml/provider_paths" />
         </provider>
-'''
-And
+`
+And provider_paths.xml in the res/xml
+
+`
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
     <external-path
         name="external_files" path="." />
 </paths>
-
+`
 
 ## Disclaimers
 - I'm not an Android developer, I have little clue on how Android works, especially Intent. I just made this plugin works for my own purpose. I just copy & pasted code from other plugins to make it work.
