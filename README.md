@@ -34,6 +34,16 @@ And provider_paths.xml in the res/xml
 ```
 If you aleady include some other plugins, like the camera plugin, those changes should have already in your project.
 
+## Using Phonegap Build
+Use either
+```xml
+    <plugin name="cordova-plugin-webintent2" spec="1.0.4" />
+```
+OR 
+```xml
+    <plugin spec="https://github.com/okwei2000/webintent.git" source="git" />
+```
+
 ## Disclaimers
 - I'm not an Android nor Cordova Plugin developer, I have little knowledge on how Android and the plugin works, especially Intent. I just made this plugin works for my own purpose. I just copy & pasted code from other plugins to make it work. If you know how to clean up the code, please let me know.
 
