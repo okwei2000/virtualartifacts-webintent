@@ -1,5 +1,39 @@
 # WebIntent Android Plugin for Cordova
 
+## Why this fork
+- Merge all changes from (https://github.com/cordova-misc/cordova-webintent). Feb.24, 2018
+- I use this plugin to allow my cordova app to accept files (any files) from another app.
+- I use this plugin to allow my cordova app to share files (any files) to another app.
+- Change the onNewIntent() to process the Intent.EXTRA_STREAM (accepting files from other apps)
+- Change the startActivity() to allow sharing any file using file://, using the FileProvider for Android N.
+- I use it in my Phonegap Build project (https://build.phonegap.com)
+
+## FileProvider on Android N. and above
+Read more: https://inthecheesefactory.com/blog/how-to-share-access-to-file-with-fileprovider-on-android-nougat/en
+
+You will need the following in AndroidManifest.xml
+'''
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.yourcompany.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
+'''
+And
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-path
+        name="external_files" path="." />
+</paths>
+
+
+## Disclaimers
+- I'm not an Android developer, I have little clue on how Android works, especially Intent. I just made this plugin works for my own purpose. I just copy & pasted code from other plugins to make it work.
+
 ## History
 
 - Originally [written](http://smus.com/android-phonegap-plugins/)
@@ -19,17 +53,7 @@
 
 - Many people forked but for some reason did not submit PRs,
   leaving their forks divergent.
-
-## Why this fork
-- I use this plugin to allow my cordova app to accept files (any files) from another app.
-- I use this plugin to allow my cordova app to share files (any files) to another app.
-- Change the onNewIntent() to process the Intent.EXTRA_STREAM (accepting files from other apps)
-- Change the startActivity() to allow sharing any file using file://, using the FileProvider for Android N.
-- I use it in my Phonegap Build project (https://build.phonegap.com)
-
-## Disclaimers
-- I'm not an Android developer, I have little clue on how Android works, especially Intent. I just made this plugin works for my own purpose. I just copy & pasted code from other plugins to make it work.
-
+  
 ## Licence ##
 
 The MIT License
