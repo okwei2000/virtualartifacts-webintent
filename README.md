@@ -20,7 +20,7 @@
 - Many people forked but for some reason did not submit PRs,
   leaving their forks divergent.
 
-## Why this folk
+## Why this fork
 - I use this plugin to allow my cordova app to accept files (any files) from another app.
 - I use this plugin to allow my cordova app to share files (any files) to another app.
 - Change the onNewIntent() to process the Intent.EXTRA_STREAM (accepting files from other apps)
