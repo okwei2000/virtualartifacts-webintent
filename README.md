@@ -44,6 +44,25 @@ OR
     <plugin spec="https://github.com/okwei2000/webintent.git" source="git" />
 ```
 
+## Sending Multiple Attachments
+
+You can now use this plugin to email multiple attachments as follows:
+
+```js
+	var email_attachments = [
+								"file:///storage/emulated/0/Android/data/com.your_company.your_app/files/file1.pdf",
+								"file:///storage/emulated/0/Android/data/com.your_company.your_app/files/file2.csv"
+							];
+
+	var external_extras = {};
+	external_extras[window.plugins.webintent.EXTRA_STREAM] = email_attachments.join();
+	external_extras[window.plugins.webintent.EXTRA_EMAIL] = "";
+	external_extras[window.plugins.webintent.EXTRA_SUBJECT] = "My subject text";
+	external_extras[window.plugins.webintent.EXTRA_TEXT] = "My email body text";
+
+	window.plugins.webintent.startActivity({action: window.plugins.webintent.ACTION_SEND_MULTIPLE, extras: external_extras, type: "text/plain"}, function() {console.log("Success!");}, function() {console.log("Failure!");});
+```
+
 ## Disclaimers
 - I'm not an Android nor Cordova Plugin developer, I have little knowledge on how Android and the plugin works, especially Intent. I just made this plugin works for my own purpose. I just copy & pasted code from other plugins to make it work. If you know how to clean up the code, please let me know.
 

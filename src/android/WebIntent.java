@@ -2,6 +2,7 @@ package com.borismus.webintent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -174,10 +175,16 @@ public class WebIntent extends CordovaPlugin {
     }
 
     void startActivity(String action, Uri uri, String type, Map<String, String> extras) {
+
+        if (uri != null) {
+            String uri_string = uri.toString();
+            Log.i(LOG_TAG, String.format("Start Activity : action = [%s], data = [%s]", action, uri_string));
+        }
+
         //Kevin W: Android 7.0 Nougat no longer allow file to be shared by file://
         //https://proandroiddev.com/sharing-files-though-intents-are-you-ready-for-nougat-70f7e9294a0b
-        if(newApi() && uri.getScheme().equals("file")){
-            try{
+        try{
+            if(newApi() && (uri != null) && uri.getScheme().equals("file")){
                 File fileToShare =  new File(new URI(uri.toString()));
                 Uri contentUri = FileProvider.getUriForFile(this.cordova.getActivity(),
                         cordova.getActivity().getPackageName() + ".provider",
@@ -191,40 +198,56 @@ public class WebIntent extends CordovaPlugin {
                 
                 ((CordovaActivity)this.cordova.getActivity()).startActivity(shareIntent);
                 return;
-            }catch(URISyntaxException e){
-                final String errorMessage = e.getMessage();
-                Log.e(LOG_TAG, errorMessage);
-                this.onNewIntentCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
-            }
-        }else{
-            Intent i = uri != null ? new Intent(action, uri) : new Intent(action);
-            if (type != null && uri != null) {
-                i.setDataAndType(uri, type); //Fix the crash problem with android 2.3.6
-            } else {
-                if (type != null) {
-                    i.setType(type);
-                }
-            }
-    
-            for (Map.Entry<String, String> entry : extras.entrySet()) {
-                final String key = entry.getKey();
-                final String value = entry.getValue();
-                // If type is text/html, the extra text must be sent as HTML.
-                if (key.equals(Intent.EXTRA_TEXT) && "text/html".equals(type)) {
-                    i.putExtra(key, Html.fromHtml(value));
-                } else if (key.equals(Intent.EXTRA_STREAM)) {
-                    // Allows sharing of images as attachments.
-                    // `value` in this case should be the URI of a file.
-                    final CordovaResourceApi resourceApi = webView.getResourceApi();
-                    i.putExtra(key, resourceApi.remapUri(Uri.parse(value)));
-                } else if (key.equals(Intent.EXTRA_EMAIL)) {
-                    // Allows adding the email address of the receiver.
-                    i.putExtra(Intent.EXTRA_EMAIL, new String[] { value });
+            }else{
+                Intent i = uri != null ? new Intent(action, uri) : new Intent(action);
+                if (type != null && uri != null) {
+                    i.setDataAndType(uri, type); //Fix the crash problem with android 2.3.6
                 } else {
-                    i.putExtra(key, value);
+                    if (type != null) {
+                        i.setType(type);
+                    }
                 }
+
+                for (Map.Entry<String, String> entry : extras.entrySet()) {
+                    final String key = entry.getKey();
+                    final String value = entry.getValue();
+
+                    // If type is text/html, the extra text must be sent as HTML.
+                    if (key.equals(Intent.EXTRA_TEXT) && "text/html".equals(type)) {
+                        i.putExtra(key, Html.fromHtml(value));
+                    } else if (key.equals(Intent.EXTRA_STREAM)) {
+                        if(action.equals(Intent.ACTION_SEND_MULTIPLE)) {
+                            ArrayList<Uri> extraUris = new ArrayList<Uri>();
+                            for(String extraUri : value.split(",")) {
+                                final CordovaResourceApi resourceApi = webView.getResourceApi();
+                                File fileToShare =  new File(new URI(resourceApi.remapUri(Uri.parse(extraUri)).toString()));
+                                Uri contentUri = FileProvider.getUriForFile(this.cordova.getActivity(),
+                                    cordova.getActivity().getPackageName() + ".provider",
+                                    fileToShare);
+                                extraUris.add(contentUri);
+                            }
+                            i.putParcelableArrayListExtra(Intent.EXTRA_STREAM, extraUris);
+                            i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        }
+                        else {
+                            // Allows sharing of images as attachments.
+                            // `value` in this case should be the URI of a file.
+                            final CordovaResourceApi resourceApi = webView.getResourceApi();
+                            i.putExtra(key, resourceApi.remapUri(Uri.parse(value)));
+                        }
+                    } else if (key.equals(Intent.EXTRA_EMAIL)) {
+                        // Allows adding the email address of the receiver.
+                        i.putExtra(Intent.EXTRA_EMAIL, new String[] { value });
+                    } else {
+                        i.putExtra(key, value);
+                    }
+                }
+                ((CordovaActivity)this.cordova.getActivity()).startActivity(i);
             }
-            ((CordovaActivity)this.cordova.getActivity()).startActivity(i);
+        }catch(URISyntaxException e){
+            final String errorMessage = e.getMessage();
+            Log.e(LOG_TAG, errorMessage);
+            this.onNewIntentCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
         }
     }
 
